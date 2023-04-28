@@ -40,7 +40,7 @@ public class Tile {
             this.tiles = new Tile[26];
             int[] scores = new int[]{1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10};
             for (int i = 0; i < 26; i++) {
-                this.tiles[i] = new Tile((char)('A' + i), scores[i])
+                this.tiles[i] = new Tile((char)('A' + i), scores[i]);
             }
         }
 
@@ -67,6 +67,9 @@ public class Tile {
 
         public Tile getTile(char letter) {
             int indexOfChar = (int) letter - (int) 'A';
+            if(indexOfChar > 26 || indexOfChar < 0) {
+                return null;
+            }
             if (letters[indexOfChar] == 0) {
                 return null;
             }

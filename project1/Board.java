@@ -18,27 +18,7 @@ public class Board {
 
     // TODO: implement this
     public boolean boardLegal(Word word) {
-        if(word.isVertical()){
-            if(word.getRow() + word.getTiles().length >= 15) {
-                return false;
-            }
-
-            boolean isValid = false;
-
-            for(int i = 0; i < word.getTiles().length; i++ ){
-                if(board[word.getRow()+i][word.getCol()].tile != null &&  board[word.getRow()+i][word.getCol()].tile != word.getTiles()[i]) {
-
-                }
-            }
-
-            return isValid;
-        }
-        else {
-            if(word.getCol() + word.getTiles().length >= 15) {
-                return false;
-            }
-        }
-        return true;
+        return false;
     }
 
     public boolean dictionaryLegal(){
