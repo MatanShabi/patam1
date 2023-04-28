@@ -1,5 +1,6 @@
 package test;
 
+import java.util.Objects;
 import java.util.Random;
 
 public class Tile {
@@ -12,34 +13,16 @@ public class Tile {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + letter;
-        result = prime * result + score;
-        return result;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tile tile = (Tile) o;
+        return letter == tile.letter && score == tile.score;
     }
 
-    //todo generate equals and hashcode
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Tile other = (Tile) obj;
-        if (letter != other.letter) {
-            return false;
-        }
-        if (score != other.score) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(letter, score);
     }
 
     public static class Bag {
