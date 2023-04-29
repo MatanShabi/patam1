@@ -1,5 +1,7 @@
 package test;
 
+import java.util.ArrayList;
+
 enum CellColor {
     GREEN, // regular word score
     AZURE, // double letter score
@@ -208,12 +210,99 @@ public class Board {
         return false;
     }
 
+    private Word getWordFromVerticalIndex(int row, int col) {
+        // Check top and bottom neighbors
+        if (row > 0 && board[row - 1][col].getTile() == null &&
+                row < SIZE - 1 && board[row + 1][col].getTile() == null) {
+            return null;
+        }
+        int startRowIndex = row;
+
+        // find start index
+        while (startRowIndex > 0 && board[startRowIndex][col] != null) {
+            startRowIndex--;
+        }
+
+        Word word = new Word(null, startRowIndex, col, true);
+        ArrayList<Tile> tiles = new ArrayList<Tile>();
+        for(int i=startRowIndex; i < SIZE; i++ ){
+            Tile tile = board[i][col].getTile();
+            if(tile != null) {
+                tiles.add(tile);
+            }
+            else {
+                break;
+            }
+        }
+        word.setTiles((Tile[]) tiles.toArray());
+
+        return word;
+    }
+
+    private Word getWordFromHorizontalIndex(int row, int col) {
+        // Check left and right neighbors
+        if (col > 0 && board[row][col - 1].getTile() == null &&
+                col < SIZE - 1 && board[row][col + 1].getTile() == null) {
+            return null;
+        }
+        int startColIndex = col;
+
+        // find start index
+        while (startColIndex > 0 && board[row][startColIndex] != null) {
+            startColIndex--;
+        }
+
+        Word word = new Word(null, row, startColIndex, true);
+        ArrayList<Tile> tiles = new ArrayList<Tile>();
+        for(int i=startColIndex; i < SIZE; i++ ){
+            Tile tile = board[row][i].getTile();
+            if(tile != null) {
+                tiles.add(tile);
+            }
+            else {
+                break;
+            }
+        }
+        word.setTiles((Tile[]) tiles.toArray());
+
+        return word;
+    }
+
     public boolean dictionaryLegal(){
         return true;
     }
 
-    public Word[] getWords(Word word) {
-        return null;
+    public ArrayList<Word> getWords(Word word) {
+        ArrayList<Word> words = new ArrayList<Word>();
+        words.add(word);
+
+        if(word.isVertical()){
+            for(int i = 0; i < word.getTiles().length; i++) {
+                int currentRow = word.getRow()+i;
+                Tile currentTile = board[currentRow][word.getCol()].getTile();
+                // check if the char not exists in board to search about new words in the board
+                if(currentTile != null){
+                    Word newWord = getWordFromVerticalIndex(currentRow, word.getCol());
+                    if(newWord != null) {
+                        words.add(newWord);
+                    }
+                }
+            }
+        }
+        else {
+            for(int i = 0; i < word.getTiles().length; i++) {
+                int currentCol = word.getCol()+i;
+                Tile currentTile = board[word.getRow()][currentCol].getTile();
+                // check if the char not exists in board to search about new words in the board
+                if(currentTile != null){
+                    Word newWord = getWordFromHorizontalIndex(word.getRow(), currentCol);
+                    if(newWord != null) {
+                        words.add(newWord);
+                    }
+                }
+            }
+        }
+        return words;
     }
     public int getScore(Word word) {
         return 0;
