@@ -113,8 +113,83 @@ public class Board {
         }
     }
 
-    // TODO: implement this
     public boolean boardLegal(Word word) {
+        if(word.isVertical()){
+            return checkVerticalWordIsLegal(word);
+        }
+        else {
+            return checkHorizontalWordIsLegal(word);
+        }
+    }
+
+    private boolean checkVerticalWordIsLegal(Word word) {
+        //check length is valid
+        if(word.getCol() + word.getTiles().length >= 15) {
+            return false;
+        }
+        // validate place
+        for(int i = 0; i < word.getTiles().length; i++) {
+            Tile currentTile = board[word.getRow()][word.getCol() + i].getTile();
+            if(currentTile != null && currentTile.letter != word.getTiles()[i].letter){
+                return false;
+            }
+        }
+        // last step if cell has neighbors
+        for(int i = 0; i < word.getTiles().length; i++) {
+            if(hasNonNullNeighbors(word.getRow(), word.getCol() + i)){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean checkHorizontalWordIsLegal(Word word){
+        //check length is valid
+        if(word.getRow() + word.getTiles().length >= 15) {
+            return false;
+        }
+        // validate place
+        for(int i = 0; i < word.getTiles().length; i++) {
+            Tile currentTile = board[word.getRow() + i][word.getCol()].getTile();
+            if(currentTile != null && currentTile.letter != word.getTiles()[i].letter){
+                return false;
+            }
+        }
+        // last step if cell has neighbors
+        for(int i = 0; i < word.getTiles().length; i++) {
+            if(hasNonNullNeighbors(word.getRow() + i, word.getCol())){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean hasNonNullNeighbors(int row, int col) {
+        int numRows = 15;
+        int numCols = 15;
+
+        // Check left neighbor
+        if (col > 0 && board[row][col - 1].getTile() != null) {
+            return true;
+        }
+
+        // Check right neighbor
+        if (col < numCols - 1 && board[row][col + 1].getTile() != null) {
+            return true;
+        }
+
+        // Check top neighbor
+        if (row > 0 && board[row - 1][col].getTile() != null) {
+            return true;
+        }
+
+        // Check bottom neighbor
+        if (row < numRows - 1 && board[row + 1][col].getTile() != null) {
+            return true;
+        }
+
         return false;
     }
 
