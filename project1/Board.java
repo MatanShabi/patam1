@@ -142,7 +142,7 @@ public class Board {
 
         // last step if cell has neighbors
         for(int i = 0; i < word.getTiles().length; i++) {
-            if(hasNonNullNeighbors(word.getRow()+i, word.getCol())){
+            if(hasNonNullNeighbors(word.getRow()+i, word.getCol(), true)){
                 return true;
             }
         }
@@ -165,7 +165,7 @@ public class Board {
 
         // last step if cell has neighbors
         for(int i = 0; i < word.getTiles().length; i++) {
-            if(hasNonNullNeighbors(word.getRow(), word.getCol()+i)){
+            if(hasNonNullNeighbors(word.getRow(), word.getCol()+i, false)){
                 return true;
             }
         }
@@ -173,71 +173,48 @@ public class Board {
         return false;
     }
 
-    public static boolean hasNonNullNeighbors(int row, int col) {
+    public static boolean hasNonNullNeighbors(int row, int col, boolean isVertical) {
 
-        // Check left neighbor
-        if (col > 0 && board[row][col - 1].getTile() != null) {
-            return true;
+        if (isVertical) {
+            // Check left neighbor
+            if (col > 0 && board[row][col - 1].getTile() != null) {
+                return true;
+            }
+
+            // Check right neighbor
+            if (col < SIZE - 1 && board[row][col + 1].getTile() != null) {
+                return true;
+            }
+        }
+         else{
+            // Check top neighbor
+            if (row > 0 && board[row - 1][col].getTile() != null) {
+                return true;
+            }
+
+            // Check bottom neighbor
+            if (row < SIZE - 1 && board[row + 1][col].getTile() != null) {
+                return true;
+            }
         }
 
-        // Check right neighbor
-        if (col < SIZE - 1 && board[row][col + 1].getTile() != null) {
-            return true;
-        }
 
-        // Check top neighbor
-        if (row > 0 && board[row - 1][col].getTile() != null) {
-            return true;
-        }
-
-        // Check bottom neighbor
-        if (row < SIZE - 1 && board[row + 1][col].getTile() != null) {
-            return true;
-        }
 
         return false;
     }
 
-    private Word getWordFromVerticalIndex(int row, int col) {
-        // Check top and bottom neighbors
-        if (!hasNonNullNeighbors(row, col)) {
-            return null;
-        }
-        int startRowIndex = row + 1;
-
-        // find start index
-        while (startRowIndex > 0 && board[startRowIndex][col] != null) {
-            startRowIndex--;
-        }
-
-        Word word = new Word(null, startRowIndex, col, true);
-        ArrayList<Tile> tiles = new ArrayList<Tile>();
-        for(int i=startRowIndex; i < SIZE; i++ ){
-            Tile tile = board[i][col].getTile();
-            if(tile != null) {
-                tiles.add(tile);
-            }
-            else {
-                break;
-            }
-        }
-
-        word.setTiles(tiles.toArray(new Tile[tiles.size()]));
-
-        return word;
-    }
-
-    private Word getWordFromHorizontalIndex(int row, int col) {
-        // Check left and right neighbors
-        if (col > 0 && board[row][col - 1].getTile() == null &&
-                col < SIZE - 1 && board[row][col + 1].getTile() == null) {
+    private Word getWordFromVerticalIndex(int row, int col, Tile aboutToBeSetTile) {
+        // Check right and left neighbors
+        if (!hasNonNullNeighbors(row, col, true)) {
             return null;
         }
         int startColIndex = col;
 
-        // find start index
-        while (startColIndex > 0 && board[row][startColIndex] != null) {
-            startColIndex--;
+        if (startColIndex != 0) {
+            // find start index
+            while (startColIndex - 1 > 0 && board[row][startColIndex - 1] != null) {
+                startColIndex--;
+            }
         }
 
         Word word = new Word(null, row, startColIndex, true);
@@ -248,9 +225,52 @@ public class Board {
                 tiles.add(tile);
             }
             else {
-                break;
+                if (i == col) {
+                    tiles.add(aboutToBeSetTile);
+                }
+                else {
+                    break;
+                }
             }
         }
+        word.setTiles(tiles.toArray(new Tile[tiles.size()]));
+
+        return word;
+
+    }
+
+    private Word getWordFromHorizontalIndex(int row, int col, Tile aboutToBeSetTile) {
+        // Check top and bottom neighbors
+        if (!hasNonNullNeighbors(row, col, false)) {
+            return null;
+        }
+
+        int startRowIndex = row;
+
+        if (startRowIndex != 0) {
+            // find start index
+            while (startRowIndex - 1 > 0 && board[startRowIndex - 1][col].getTile() != null) {
+                startRowIndex--;
+            }
+        }
+
+        Word word = new Word(null, startRowIndex, col, true);
+        ArrayList<Tile> tiles = new ArrayList<Tile>();
+        for(int i=startRowIndex; i < SIZE; i++ ){
+            Tile tile = board[i][col].getTile();
+            if(tile != null) {
+                tiles.add(tile);
+            }
+            else {
+                if (i == row) {
+                    tiles.add(aboutToBeSetTile);
+                }
+                else {
+                    break;
+                }
+            }
+        }
+
         word.setTiles(tiles.toArray(new Tile[tiles.size()]));
 
         return word;
@@ -270,7 +290,7 @@ public class Board {
                 Tile currentTile = board[currentRow][word.getCol()].getTile();
                 // check if the char not exists in board to search about new words in the board
                 if(currentTile == null){
-                    Word newWord = getWordFromVerticalIndex(currentRow, word.getCol());
+                    Word newWord = getWordFromVerticalIndex(currentRow, word.getCol(), word.getTiles()[i]);
                     if(newWord != null) {
                         words.add(newWord);
                     }
@@ -283,7 +303,7 @@ public class Board {
                 Tile currentTile = board[word.getRow()][currentCol].getTile();
                 // check if the char not exists in board to search about new words in the board
                 if(currentTile == null){
-                    Word newWord = getWordFromHorizontalIndex(word.getRow(), currentCol);
+                    Word newWord = getWordFromHorizontalIndex(word.getRow(), currentCol, word.getTiles()[i]);
                     if(newWord != null) {
                         words.add(newWord);
                     }
@@ -397,27 +417,32 @@ public class Board {
             return 0;
         }
 
-        ArrayList<Word> words = getWords(word);
-        for(Word w: words) {
-            if(dictionaryLegal(w)){
-                totalWordsScore += getScore(w);
-            }
-            else {
-                return 0;
-            }
-        }
-
         Tile[] tiles = word.getTiles();
         if(word.isVertical()){
             for(int i = 0; i < tiles.length; i++) {
                 int currentRow = word.getRow() + i;
-                board[currentRow][word.getCol()].setTile(tiles[i]);
+                if (tiles[i] != null) {
+                    board[currentRow][word.getCol()].setTile(tiles[i]);
+                }
             }
         }
         else {
             for (int i = 0; i < tiles.length; i++) {
                 int currentCol = word.getCol() + i;
-                board[word.getRow()][currentCol].setTile(tiles[i]);
+                if (tiles[i] != null) {
+                    board[word.getRow()][currentCol].setTile(tiles[i]);
+                }
+            }
+        }
+
+        ArrayList<Word> words = getWords(word);
+        for(Word w: words) {
+            if(dictionaryLegal(w)){
+                int currentScore = getScore(w);
+                totalWordsScore += currentScore;
+            }
+            else {
+                return 0;
             }
         }
 
