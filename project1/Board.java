@@ -2,15 +2,15 @@ package test;
 
 import java.util.ArrayList;
 
-enum CellColor {
-    GREEN, // regular word score
-    AZURE, // double letter score
-    BLUE, // triple latter score
-    YELLOW, // double word score
-    RED // triple word score
-}
 
 public class Board {
+    enum CellColor {
+        GREEN, // regular word score
+        AZURE, // double letter score
+        BLUE, // triple latter score
+        YELLOW, // double word score
+        RED // triple word score
+    }
     static final int SIZE = 15;
     private static Cell[][] board = new Cell[SIZE][SIZE];
     private static Board instance;
@@ -341,30 +341,25 @@ public class Board {
             }
 
             switch (currentColor){
-                case RED -> {
+                case RED:
                     totalScore += currentScore;
                     multipler *= 3;
                     break;
-                }
-                case GREEN -> {
+                case GREEN:
                     totalScore += currentScore;
                     break;
-                }
-                case BLUE -> {
+                case BLUE:
                     totalScore += currentScore * 3;
                     break;
-                }
-                case AZURE -> {
+                case AZURE:
                     totalScore += currentScore * 2;
                     break;
-                }
-                case YELLOW -> {
+                case YELLOW:
                     totalScore += currentScore;
                     if((board[7][7].getTile() == null) || (word.getRow() + i != 7 && word.getCol() != 7)) {
                         multipler *= 2;
                     }
                     break;
-                }
             }
         }
         return totalScore * multipler;
@@ -389,30 +384,25 @@ public class Board {
             }
 
             switch (currentColor){
-                case RED -> {
+                case RED:
                     totalScore += currentScore;
                     multipler *= 3;
                     break;
-                }
-                case GREEN -> {
+                case GREEN:
                     totalScore += currentScore;
                     break;
-                }
-                case BLUE -> {
+                case BLUE:
                     totalScore += currentScore * 3;
                     break;
-                }
-                case AZURE -> {
+                case AZURE:
                     totalScore += currentScore * 2;
                     break;
-                }
-                case YELLOW -> {
+                case YELLOW:
                     totalScore += currentScore;
                     if((board[7][7].getTile() == null) || (word.getRow() != 7 && word.getCol() + i != 7)) {
                         multipler *= 2;
                     }
                     break;
-                }
             }
         }
         return totalScore * multipler;
@@ -454,7 +444,6 @@ public class Board {
             }
         }
 
-        print();
         return totalWordsScore;
     }
 
