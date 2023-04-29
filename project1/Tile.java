@@ -67,10 +67,7 @@ public class Tile {
 
         public Tile getTile(char letter) {
             int indexOfChar = (int) letter - (int) 'A';
-            if(indexOfChar > 26 || indexOfChar < 0) {
-                return null;
-            }
-            if (letters[indexOfChar] == 0) {
+            if(indexOfChar > 26 || indexOfChar < 0 || letters[indexOfChar] == 0) {
                 return null;
             }
 
@@ -79,13 +76,9 @@ public class Tile {
         }
 
         public void put(Tile tile) {
-            if (amountOfTiles < 98) {
-                int indexOfChar = (int) tile.letter - (int) 'A';
-                if (this.letters[indexOfChar] < this.initialLetters[indexOfChar]) {
-
-                }
+            int indexOfChar = (int) tile.letter - (int) 'A';
+            if (this.letters[indexOfChar] < this.initialLetters[indexOfChar]) {
                 amountOfTiles++;
-                
                 letters[indexOfChar]++;
             }
         }
