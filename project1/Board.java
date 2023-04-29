@@ -9,8 +9,8 @@ enum CellColor {
 }
 
 public class Board {
-
-    private static Cell[][] board = new Cell[15][15];
+    static final int SIZE = 15;
+    private static Cell[][] board = new Cell[SIZE][SIZE];
     private static Board instance;
 
     private Board(){
@@ -22,8 +22,8 @@ public class Board {
     }
 
     private void initBoard() {
-        for(int i = 0; i<15; i++){
-            for(int j = 0; j<15; j++){
+        for(int i = 0; i<SIZE; i++){
+            for(int j = 0; j<SIZE; j++){
                 board[i][j] = new Cell(null, CellColor.GREEN);
             }
         }
@@ -105,8 +105,8 @@ public class Board {
     }
 
     private void print(){
-        for (int i = 0; i < 15; i++) {
-            for (int j = 0; j < 15; j++) {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
                 System.out.printf("| %s ", board[i][j].color);
             }
             System.out.println("|");
@@ -124,7 +124,7 @@ public class Board {
 
     private boolean checkVerticalWordIsLegal(Word word) {
         //check length is valid
-        if(word.getCol() + word.getTiles().length >= 15) {
+        if(word.getCol() + word.getTiles().length >= SIZE) {
             return false;
         }
         // validate place
@@ -146,7 +146,7 @@ public class Board {
 
     private boolean checkHorizontalWordIsLegal(Word word){
         //check length is valid
-        if(word.getRow() + word.getTiles().length >= 15) {
+        if(word.getRow() + word.getTiles().length >= SIZE) {
             return false;
         }
         // validate place
@@ -167,8 +167,6 @@ public class Board {
     }
 
     public static boolean hasNonNullNeighbors(int row, int col) {
-        int numRows = 15;
-        int numCols = 15;
 
         // Check left neighbor
         if (col > 0 && board[row][col - 1].getTile() != null) {
@@ -176,7 +174,7 @@ public class Board {
         }
 
         // Check right neighbor
-        if (col < numCols - 1 && board[row][col + 1].getTile() != null) {
+        if (col < SIZE - 1 && board[row][col + 1].getTile() != null) {
             return true;
         }
 
@@ -186,7 +184,7 @@ public class Board {
         }
 
         // Check bottom neighbor
-        if (row < numRows - 1 && board[row + 1][col].getTile() != null) {
+        if (row < SIZE - 1 && board[row + 1][col].getTile() != null) {
             return true;
         }
 
@@ -209,9 +207,9 @@ public class Board {
     }
 
     public Tile[][] getTiles() {
-        Tile[][] tiles = new Tile[15][15];
-        for(int i=0; i< 15; i++){
-            for(int j=0; j< 15; j++){
+        Tile[][] tiles = new Tile[SIZE][SIZE];
+        for(int i=0; i< SIZE; i++){
+            for(int j=0; j< SIZE; j++){
                 tiles[i][j] = board[i][j].getTile();
             }
         }
