@@ -109,7 +109,7 @@ public class Board {
     private void print(){
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
-                System.out.printf("| %s ", board[i][j].color);
+                System.out.printf("| %s %c", board[i][j].color, (board[i][j].getTile() == null) ? '#' : board[i][j].getTile().letter);
             }
             System.out.println("|");
         }
@@ -332,6 +332,7 @@ public class Board {
             Cell currentCell = board[word.getRow()+i][word.getCol()];
 
             if(currentCell.getTile() != null){
+                currentColor = currentCell.getColor();
                 currentScore = currentCell.getTile().score;
             }
             else {
@@ -359,7 +360,10 @@ public class Board {
                 }
                 case YELLOW -> {
                     totalScore += currentScore;
-                    multipler *= 2;
+                    if((board[7][7].getTile() == null) || (word.getRow() + i != 7 && word.getCol() != 7)) {
+                        multipler *= 2;
+                    }
+                    break;
                 }
             }
         }
@@ -376,6 +380,7 @@ public class Board {
             Cell currentCell =  board[word.getRow()][word.getCol() + i];
 
             if(currentCell.getTile() != null){
+                currentColor = currentCell.getColor();
                 currentScore = currentCell.getTile().score;
             }
             else {
@@ -403,7 +408,10 @@ public class Board {
                 }
                 case YELLOW -> {
                     totalScore += currentScore;
-                    multipler *= 2;
+                    if((board[7][7].getTile() == null) || (word.getRow() != 7 && word.getCol() + i != 7)) {
+                        multipler *= 2;
+                    }
+                    break;
                 }
             }
         }
@@ -415,6 +423,17 @@ public class Board {
 
         if(!boardLegal(word)) {
             return 0;
+        }
+
+        ArrayList<Word> words = getWords(word);
+        for(Word w: words) {
+            if(dictionaryLegal(w)){
+                int currentScore = getScore(w);
+                totalWordsScore += currentScore;
+            }
+            else {
+                return 0;
+            }
         }
 
         Tile[] tiles = word.getTiles();
@@ -435,17 +454,7 @@ public class Board {
             }
         }
 
-        ArrayList<Word> words = getWords(word);
-        for(Word w: words) {
-            if(dictionaryLegal(w)){
-                int currentScore = getScore(w);
-                totalWordsScore += currentScore;
-            }
-            else {
-                return 0;
-            }
-        }
-
+        print();
         return totalWordsScore;
     }
 
