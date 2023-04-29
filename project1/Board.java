@@ -114,6 +114,10 @@ public class Board {
     }
 
     public boolean boardLegal(Word word) {
+
+        if(word.getCol() < 0 || word.getRow() < 0)
+            return false;
+
         if(word.isVertical()){
             return checkVerticalWordIsLegal(word);
         }
@@ -123,20 +127,26 @@ public class Board {
     }
 
     private boolean checkVerticalWordIsLegal(Word word) {
+        int wordPlaceTaken = word.getRow() + word.getTiles().length;
+
+        if(board[7][7].getTile() == null && word.getCol() == 7 && wordPlaceTaken >7 && wordPlaceTaken <= SIZE) {
+            return true;
+        }
+
         //check length is valid
-        if(word.getCol() + word.getTiles().length >= SIZE) {
+        if(wordPlaceTaken >= SIZE) {
             return false;
         }
         // validate place
         for(int i = 0; i < word.getTiles().length; i++) {
-            Tile currentTile = board[word.getRow()][word.getCol() + i].getTile();
+            Tile currentTile = board[word.getRow()+i][word.getCol()].getTile();
             if(currentTile != null && currentTile.letter != word.getTiles()[i].letter){
                 return false;
             }
         }
         // last step if cell has neighbors
         for(int i = 0; i < word.getTiles().length; i++) {
-            if(hasNonNullNeighbors(word.getRow(), word.getCol() + i)){
+            if(hasNonNullNeighbors(word.getRow()+i, word.getCol())){
                 return true;
             }
         }
@@ -145,20 +155,27 @@ public class Board {
     }
 
     private boolean checkHorizontalWordIsLegal(Word word){
+
+        int wordPlaceTaken = word.getCol() + word.getTiles().length;
+
+        if(board[7][7].getTile() == null && word.getRow() == 7 && wordPlaceTaken >7 && wordPlaceTaken <= SIZE) {
+            return true;
+        }
+
         //check length is valid
-        if(word.getRow() + word.getTiles().length >= SIZE) {
+        if(wordPlaceTaken >= SIZE || word.getCol() < 0 || word.getRow() < 0) {
             return false;
         }
         // validate place
         for(int i = 0; i < word.getTiles().length; i++) {
-            Tile currentTile = board[word.getRow() + i][word.getCol()].getTile();
+            Tile currentTile = board[word.getRow()][word.getCol()+i].getTile();
             if(currentTile != null && currentTile.letter != word.getTiles()[i].letter){
                 return false;
             }
         }
         // last step if cell has neighbors
         for(int i = 0; i < word.getTiles().length; i++) {
-            if(hasNonNullNeighbors(word.getRow() + i, word.getCol())){
+            if(hasNonNullNeighbors(word.getRow(), word.getCol()+i)){
                 return true;
             }
         }
