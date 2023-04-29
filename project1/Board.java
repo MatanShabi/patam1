@@ -212,11 +212,11 @@ public class Board {
 
     private Word getWordFromVerticalIndex(int row, int col) {
         // Check top and bottom neighbors
-        if (row > 0 && board[row - 1][col].getTile() == null &&
-                row < SIZE - 1 && board[row + 1][col].getTile() == null) {
+        if ((row > 0 && board[row - 1][col].getTile() == null) &&
+                (row < SIZE - 1 && board[row + 1][col].getTile() == null)) {
             return null;
         }
-        int startRowIndex = row;
+        int startRowIndex = row + 1;
 
         // find start index
         while (startRowIndex > 0 && board[startRowIndex][col] != null) {
@@ -234,7 +234,8 @@ public class Board {
                 break;
             }
         }
-        word.setTiles((Tile[]) tiles.toArray());
+
+        word.setTiles(tiles.toArray(new Tile[tiles.size()]));
 
         return word;
     }
@@ -268,7 +269,7 @@ public class Board {
         return word;
     }
 
-    public boolean dictionaryLegal(){
+    public boolean dictionaryLegal(Word word){
         return true;
     }
 
@@ -281,7 +282,7 @@ public class Board {
                 int currentRow = word.getRow()+i;
                 Tile currentTile = board[currentRow][word.getCol()].getTile();
                 // check if the char not exists in board to search about new words in the board
-                if(currentTile != null){
+                if(currentTile == null){
                     Word newWord = getWordFromVerticalIndex(currentRow, word.getCol());
                     if(newWord != null) {
                         words.add(newWord);
@@ -294,7 +295,7 @@ public class Board {
                 int currentCol = word.getCol()+i;
                 Tile currentTile = board[word.getRow()][currentCol].getTile();
                 // check if the char not exists in board to search about new words in the board
-                if(currentTile != null){
+                if(currentTile == null){
                     Word newWord = getWordFromHorizontalIndex(word.getRow(), currentCol);
                     if(newWord != null) {
                         words.add(newWord);
@@ -305,11 +306,119 @@ public class Board {
         return words;
     }
     public int getScore(Word word) {
-        return 0;
+        if(word.isVertical()) {
+            return calcVerticalWordScore(word);
+        }
+        else {
+            return calcHorizontalWordScore(word);
+        }
+
+    }
+
+    private static int calcVerticalWordScore(Word word) {
+        int totalScore = 0;
+        int multipler = 1;
+        Tile[] tiles = word.getTiles();
+        for (int i = 0; i < tiles.length; i++) {
+            int currentRow = word.getRow() + i;
+            CellColor currentColor = board[currentRow][word.getCol()].getColor();
+            int currentScore = tiles[i].score;
+
+            switch (currentColor){
+                case RED -> {
+                    totalScore += currentScore;
+                    multipler *= 3;
+                    break;
+                }
+                case GREEN -> {
+                    totalScore += currentScore;
+                    break;
+                }
+                case BLUE -> {
+                    totalScore += currentScore * 3;
+                    break;
+                }
+                case AZURE -> {
+                    totalScore += currentScore * 2;
+                    break;
+                }
+                case YELLOW -> {
+                    totalScore += currentScore;
+                    multipler *= 2;
+                }
+            }
+        }
+        return totalScore * multipler;
+    }
+
+    private static int calcHorizontalWordScore(Word word) {
+        int totalScore = 0;
+        int multipler = 1 ;
+        Tile[] tiles = word.getTiles();
+        for (int i = 0; i < tiles.length; i++) {
+            int currentCol = word.getCol() + i;
+            CellColor currentColor = board[word.getRow()][currentCol].getColor();
+            int currentScore = tiles[i].score;
+
+            switch (currentColor){
+                case RED -> {
+                    totalScore += currentScore;
+                    multipler *= 3;
+                    break;
+                }
+                case GREEN -> {
+                    totalScore += currentScore;
+                    break;
+                }
+                case BLUE -> {
+                    totalScore += currentScore * 3;
+                    break;
+                }
+                case AZURE -> {
+                    totalScore += currentScore * 2;
+                    break;
+                }
+                case YELLOW -> {
+                    totalScore += currentScore;
+                    multipler *= 2;
+                }
+            }
+        }
+        return totalScore * multipler;
     }
 
     public int tryPlaceWord(Word word){
-        return 0;
+        int totalWordsScore = 0;
+
+        if(!boardLegal(word)) {
+            return 0;
+        }
+
+        ArrayList<Word> words = getWords(word);
+        for(Word w: words) {
+            if(dictionaryLegal(w)){
+                totalWordsScore += getScore(w);
+            }
+            else {
+                return 0;
+            }
+        }
+
+        Tile[] tiles = word.getTiles();
+        if(word.isVertical()){
+            for(int i = 0; i < tiles.length; i++) {
+                int currentRow = word.getRow() + i;
+                board[currentRow][word.getCol()].setTile(tiles[i]);
+            }
+        }
+        else {
+            for (int i = 0; i < tiles.length; i++) {
+                int currentCol = word.getCol() + i;
+                board[word.getRow()][currentCol].setTile(tiles[i]);
+            }
+        }
+
+        return totalWordsScore;
     }
 
     public Tile[][] getTiles() {
