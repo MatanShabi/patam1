@@ -139,13 +139,7 @@ public class Board {
         if(wordPlaceTaken >= SIZE) {
             return false;
         }
-        // validate place
-        for(int i = 0; i < word.getTiles().length; i++) {
-            Tile currentTile = board[word.getRow()+i][word.getCol()].getTile();
-            if(currentTile != null && currentTile.letter != word.getTiles()[i].letter){
-                return false;
-            }
-        }
+
         // last step if cell has neighbors
         for(int i = 0; i < word.getTiles().length; i++) {
             if(hasNonNullNeighbors(word.getRow()+i, word.getCol())){
@@ -165,16 +159,10 @@ public class Board {
         }
 
         //check length is valid
-        if(wordPlaceTaken >= SIZE || word.getCol() < 0 || word.getRow() < 0) {
+        if(wordPlaceTaken >= SIZE) {
             return false;
         }
-        // validate place
-        for(int i = 0; i < word.getTiles().length; i++) {
-            Tile currentTile = board[word.getRow()][word.getCol()+i].getTile();
-            if(currentTile != null && currentTile.letter != word.getTiles()[i].letter){
-                return false;
-            }
-        }
+
         // last step if cell has neighbors
         for(int i = 0; i < word.getTiles().length; i++) {
             if(hasNonNullNeighbors(word.getRow(), word.getCol()+i)){
@@ -212,8 +200,7 @@ public class Board {
 
     private Word getWordFromVerticalIndex(int row, int col) {
         // Check top and bottom neighbors
-        if ((row > 0 && board[row - 1][col].getTile() == null) &&
-                (row < SIZE - 1 && board[row + 1][col].getTile() == null)) {
+        if (!hasNonNullNeighbors(row, col)) {
             return null;
         }
         int startRowIndex = row + 1;
@@ -264,7 +251,7 @@ public class Board {
                 break;
             }
         }
-        word.setTiles((Tile[]) tiles.toArray());
+        word.setTiles(tiles.toArray(new Tile[tiles.size()]));
 
         return word;
     }
@@ -320,9 +307,17 @@ public class Board {
         int multipler = 1;
         Tile[] tiles = word.getTiles();
         for (int i = 0; i < tiles.length; i++) {
-            int currentRow = word.getRow() + i;
-            CellColor currentColor = board[currentRow][word.getCol()].getColor();
-            int currentScore = tiles[i].score;
+            CellColor currentColor = CellColor.GREEN;
+            int currentScore = 0;
+            Cell currentCell = board[word.getRow()+i][word.getCol()];
+
+            if(currentCell.getTile() != null){
+                currentScore = currentCell.getTile().score;
+            }
+            else {
+                currentScore = tiles[i].score;
+                currentColor = currentCell.getColor();
+            }
 
             switch (currentColor){
                 case RED -> {
@@ -356,9 +351,17 @@ public class Board {
         int multipler = 1 ;
         Tile[] tiles = word.getTiles();
         for (int i = 0; i < tiles.length; i++) {
-            int currentCol = word.getCol() + i;
-            CellColor currentColor = board[word.getRow()][currentCol].getColor();
-            int currentScore = tiles[i].score;
+            CellColor currentColor = CellColor.GREEN;
+            int currentScore = 0;
+            Cell currentCell =  board[word.getRow()][word.getCol() + i];
+
+            if(currentCell.getTile() != null){
+                currentScore = currentCell.getTile().score;
+            }
+            else {
+                currentScore = tiles[i].score;
+                currentColor = currentCell.getColor();
+            }
 
             switch (currentColor){
                 case RED -> {
