@@ -20,12 +20,12 @@ public class CacheManager {
     }
 
     public void add(String word) {
-        if(cache.size() >= this.size){
+        if(cache.size() >= size){
             String removeWord = crp.remove();
             cache.remove(removeWord);
-        } else {
-            crp.add(word);
-            cache.add(word);
         }
+        crp.add(word);
+        cache.add(word);
+
     }
 }
