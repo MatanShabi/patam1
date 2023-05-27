@@ -8,9 +8,9 @@ import java.util.BitSet;
 public class BloomFilter {
 
     private final BitSet wordBitSet;
-    private int wordBitSetLen;
-    private String md5;
-    private String sha1;
+    private final int wordBitSetLen;
+    private final String md5;
+    private final String sha1;
 
     public BloomFilter(int wordBitSetLen, String md5, String sha1) {
         this.md5 = md5;
