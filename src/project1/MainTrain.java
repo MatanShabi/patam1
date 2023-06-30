@@ -1,6 +1,6 @@
 package test;
 
-import project1.Tile.Bag;
+import test.Tile.Bag;
 
 public class MainTrain {
 
